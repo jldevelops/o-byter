@@ -1,0 +1,151 @@
+{	
+	init: `{
+		$owner = 'JBGMJI7XSKLKNHZF26BUBWHVUZSDV3P5';
+		$addr = trigger.address;
+		$fee = 1000;
+		$ratio = var['price'];//bytes per 1 asset
+		$asset_ct = var['asset'];
+		//asset detection and checks
+		if(trigger.output[[asset!=base]].asset != 'none')
+			$asset = trigger.output[[asset!=base]].asset;
+		if($asset){
+			if($asset == 'ambiguous') bounce('Only 1 asset per tx');
+			if($addr != $owner and $asset != $asset_ct) bounce('Asset not allowed, please send ' || $asset_ct);
+			$asset_inp = trigger.output[[asset!=base]];
+		}
+		$base_inp = trigger.output[[asset=base]] - $fee;
+		$balance = balance[base] - $base_inp + $fee;
+	}`,
+	messages: {
+		cases: [
+			{
+				if:`{
+						$addr != $owner
+					}`,
+				init:`{
+					    if(!var['asset'] or !var['price'] or !var['want']) bounce('Not configured yet');
+						if(!$asset and var['want'] == 'asset') bounce('AA owner wants assets');
+						if($asset and var['want'] == 'byte') bounce('AA owner wants bytes');
+
+						$available = $asset ? ($balance - ($balance % $ratio)) : balance[$asset_ct];
+						if($available <= 0) bounce('There are no '|| ($asset?'bytes':'assets')||' left');
+
+						$to_send = $asset ? ($asset_inp * $ratio) : (($base_inp - ($base_inp % $ratio)) / $ratio);
+						if($available < $to_send) bounce('Not enough funds, try lower amount');
+					}`,
+				messages: [
+					{	
+						app: 'payment',
+						payload: {
+							asset:'base',
+							outputs: [
+								{address: `{$addr}`, amount: `{$to_send + $base_inp}`}
+							]
+						}
+					},
+					{
+						if: `{!$asset}`,
+						app: 'payment',
+						payload: {
+							asset:`{$asset_ct}`,
+							outputs: [
+								{address: `{$addr}`, amount: `{$to_send}`}
+							]
+						}
+					},
+					{
+						app: 'state',
+						state: `{
+							response['message'] = 'exchanged ('||($asset ? 'assets': 'bytes')||') at '||$ratio||' bytes per token';
+						}`
+					}
+				]
+			},
+			{
+				if:`{
+						trigger.data.configure
+					}`,
+				messages: [
+					{
+						if: `{$asset}`,
+						app: 'payment',
+						payload: {
+							asset:`{$asset}`,
+							outputs: [
+								{address: `{$addr}`, amount: `{$asset_inp}`}
+							]
+						}
+					},
+					{
+						app: 'payment',
+						payload: {
+							asset:'base',
+							outputs: [
+								{address: `{$addr}`, amount: `{$base_inp}`}
+							]
+						}
+					},
+					{
+						app: 'state',
+						state: `{
+							if(trigger.data.price)
+								var['price'] = trigger.data.price;
+							
+							if($asset or trigger.data.asset)
+								var['asset'] = $asset otherwise trigger.data.asset;
+
+							if(trigger.data.want){
+								if(trigger.data.want != 'asset' or trigger.data.want != 'byte')
+									bounce('Not allowed. Valid values: asset byte');
+								var['want'] = trigger.data.want;
+							}
+							response['message'] = 'exchange box configured!';
+						}`
+					}
+				]
+			},
+			{
+				if:`{
+						trigger.data.withdraw
+					}`,
+				messages: [
+					{
+						if:`{balance[$asset_ct] > 0}`,
+						app: 'payment',
+						payload: {
+							asset:`{$asset_ct}`,
+							outputs: [
+								{address: `{$addr}`, amount: `{balance[$asset_ct]}`}
+							]
+						}
+					},
+					{
+						app: 'payment',
+						payload: {
+							asset:'base',
+							outputs: [
+								{address: `{$addr}`}
+							]
+						}
+					},
+					{
+						app: 'state',
+						state: `{
+							response['message'] = 'withdrawn '||$asset_ct||' asset and/or bytes';
+						}`
+					}
+				]
+			},
+			{
+				messages: [
+					{
+						app: 'state',
+						state: `{
+							response['message'] = 'amount deposited correctly';
+						}`
+					}
+				]
+			}
+		]
+	}
+}
