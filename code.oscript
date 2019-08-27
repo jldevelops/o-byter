@@ -119,7 +119,7 @@
 			},
 			{
 				if:`{
-						trigger.data.withdraw
+						trigger.data.withdraw and $asset_ct
 					}`,
 				messages: [
 					{
