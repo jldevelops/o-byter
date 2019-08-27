@@ -4,11 +4,13 @@ AA exchange box for an address
 Allows byte/asset exchange between owner and a un/known party
 
 ## How it works
-Owner deposits amounts to exchange. Then, configures the exchange by setting: price to exchange, asset id, exchange direction and (optional) allowed address to exchange.
+Once deployed, it has to be configured by setting: price to exchange, asset id, exchange direction and (optional) allowed address to exchange.
 
 After that, unknown parties (or one only) can exchange until AA run out of asset/byte.
 
 Owner can withdraw any amount anytime.
+
+Owner can deposit any amount anytime.
 
 ## How to configure
 Send param "configure" with value 1:
