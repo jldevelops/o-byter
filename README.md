@@ -8,7 +8,7 @@ Before first exchange, it has to be configured by setting: price to exchange, as
 
 After that, unknown parties (or one only) can exchange until AA run out of asset/byte.
 
-Owner can deposit/withdraw any amount anytime.
+Owner can deposit any amount or withdraw all bytes and assets anytime (sending `withdraw`= 1).
 
 ## How to configure
 Send `configure` with value 1:
