@@ -16,7 +16,7 @@
 						trigger.address != $OWNER
 					}`,
 				init:`{
-					    	if(!var['asset'] or !var['price'] or !var['want']) bounce('Not configured yet');
+						if(!var['asset'] or !var['price'] or !var['want']) bounce('Not configured yet');
 						if(var['address'] and trigger.address != var['address']) bounce('No permission for exchange');
 
 						if($asset and $asset != var['asset']) bounce('Asset not allowed, please send ' || var['asset']);
@@ -33,23 +33,12 @@
 						if($available < $to_send) bounce('Not enough funds, try lower amount');
 					}`,
 				messages: [
-					{	
-						if: `{$asset}`,
-						app: 'payment',
-						payload: {
-							asset:'base',
-							outputs: [
-								{address: `{trigger.address}`, amount: `{$to_send + $base_inp}`}
-							]
-						}
-					},
 					{
-						if: `{!$asset}`,
 						app: 'payment',
 						payload: {
-							asset:`{var['asset']}`,
+							asset:`{$asset ? 'base' : var['asset']}`,
 							outputs: [
-								{address: `{trigger.address}`, amount: `{$to_send}`}
+								{address: `{trigger.address}`, amount: `{$asset ? ($to_send + $base_inp) : $to_send}`}
 							]
 						}
 					},
@@ -108,7 +97,7 @@
 									bounce('Not allowed. Valid values: asset,byte');
 								var['want'] = trigger.data.want;
 							}
-							
+
 							if(!(var['price'] and var['asset'] and var['want']))
 								response['message'] = 'Not properly configured, you are missing required param/s';
 							else
@@ -119,11 +108,11 @@
 			},
 			{
 				if:`{
-						trigger.data.withdraw and var['asset']
+						trigger.data.withdraw
 					}`,
 				messages: [
 					{
-						if:`{balance[var['asset']] > 0}`,
+						if:`{var['asset'] and balance[var['asset']] > 0}`,
 						app: 'payment',
 						payload: {
 							asset:`{var['asset']}`,
