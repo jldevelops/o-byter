@@ -15,8 +15,8 @@ Send param "configure" with value 1:
 
 - Asset can be configured by sending an asset (will be bounced back) or by setting it with "asset" param.
 
-- Price is set with "price" param.
+- Price -> "price" param.
 
-- Allowed address is set with "address" param. Aditionally, it can be cleared sending "clear" as value.
+- Allowed address -> "address" param. Aditionally, it can be cleared sending "clear" as value.
 
-- Exchange direction: set it with "want" param. Valid values: "asset" or "byte".
+- Exchange direction -> "want" param. Valid values: "asset" or "byte".
