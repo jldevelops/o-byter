@@ -11,12 +11,12 @@ After that, unknown parties (or one only) can exchange until AA run out of asset
 Owner can deposit/withdraw any amount anytime.
 
 ## How to configure
-Send param "configure" with value 1:
+Send `configure` with value 1:
 
-- Asset can be configured by sending an asset (will be bounced back) or by setting it with "asset" param.
+- Asset can be configured by sending an asset (will be sent back) or by setting it with `asset` param.
 
-- Price -> "price" param.
+- Price -> `price` param.
 
-- Allowed address -> "address" param. Aditionally, it can be cleared sending "clear" as value.
+- Allowed address -> `address` param. Aditionally, it can be cleared sending `clear` as value.
 
-- Exchange direction -> "want" param. Valid values: "asset" or "byte".
+- Exchange direction -> `want` param. Valid values: `asset` or `byte`.
