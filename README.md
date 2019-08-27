@@ -15,7 +15,7 @@ Send `configure` with value 1:
 
 - Asset can be configured by sending an asset (will be sent back) or by setting it with `asset` param.
 
-- Price -> `price` param.
+- Price -> `price` param. Expressed in bytes per one asset.
 
 - Allowed address -> `address` param. Aditionally, it can be cleared sending `clear` as value.
 
