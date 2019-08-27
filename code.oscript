@@ -23,6 +23,7 @@
 						$addr != $owner
 					}`,
 				init:`{
+						if(var['address'] and var['address'] != $addr) bounce('No permission for exchange');
 					    if(!var['asset'] or !var['price'] or !var['want']) bounce('Not configured yet');
 						if(!$asset and var['want'] == 'asset') bounce('AA owner wants assets');
 						if($asset and var['want'] == 'byte') bounce('AA owner wants bytes');
@@ -88,14 +89,23 @@
 					{
 						app: 'state',
 						state: `{
-							if(trigger.data.price)
-								var['price'] = trigger.data.price;
+							if(trigger.data.price){
+								if(round(trigger.data.price) <= 0) bounce('Price must be greater than 0');
+								var['price'] = round(trigger.data.price);
+							}
 							
 							if($asset or trigger.data.asset)
 								var['asset'] = $asset otherwise trigger.data.asset;
 
+							if(trigger.data.address){
+								if(trigger.data.address == 'clear')
+									var['address'] = false;
+								else
+									var['address'] = trigger.data.address;
+							}
+
 							if(trigger.data.want){
-								if(trigger.data.want != 'asset' or trigger.data.want != 'byte')
+								if(trigger.data.want != 'asset' and trigger.data.want != 'byte')
 									bounce('Not allowed. Valid values: asset byte');
 								var['want'] = trigger.data.want;
 							}
