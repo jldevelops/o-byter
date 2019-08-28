@@ -6,9 +6,9 @@ Allows byte/asset exchange between owner and a un/known party
 ## How it works
 Before first exchange, it has to be configured by setting: price to exchange, asset id, exchange direction and (optional) allowed address to exchange.
 
-After that, unknown parties (or one only) can exchange until AA run out of asset/byte.
+After that, unknown parties (or one only) can exchange until AA runs out of asset/byte.
 
-Owner can deposit any amount or withdraw all bytes and assets anytime (sending `withdraw`= 1).
+Owner can deposit any amount or withdraw all bytes and defined asset anytime (sending `withdraw`= 1).
 
 ## How to configure
 Send `configure` with value 1:
