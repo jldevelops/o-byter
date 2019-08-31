@@ -36,7 +36,7 @@
 					{
 						app: 'payment',
 						payload: {
-							asset:`{$asset ? 'base' : var['asset']}`,
+							asset:`{($asset ? 'base' : var['asset'])}`,
 							outputs: [
 								{address: `{trigger.address}`, amount: `{$asset ? ($to_send + $base_inp) : $to_send}`}
 							]
