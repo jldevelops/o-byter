@@ -20,3 +20,7 @@ Send `configure` with value 1:
 - Allowed address -> `address` param. Aditionally, it can be cleared sending `clear` as value.
 
 - Exchange direction -> `want` param. Valid values: `asset` or `byte`.
+
+## AA registration (https://github.com/jldevelops/o-waar)
+Owner is able to register the AA so it could be used with @name instead of address.
+To do so, send `register`=1 and `name` with desired name.
