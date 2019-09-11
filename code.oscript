@@ -2,7 +2,7 @@
 	init: `{
 		$OWNER = 'JBGMJI7XSKLKNHZF26BUBWHVUZSDV3P5';
 		$FEE = 1000;
-
+		$REGISTRY = 'C67F2UX4VNZZ2RJMPBADG7PRFPZZOT4E';
 		$base_inp = trigger.output[[asset=base]] - $FEE;
 
 		if(trigger.output[[asset!=base]].asset != 'none')
@@ -46,6 +46,33 @@
 						app: 'state',
 						state: `{
 							response['message'] = 'Exchanged ('||($asset ? 'assets': 'bytes')||') at '||var['price']||' bytes per token';
+						}`
+					}
+				]
+			},
+			{
+				if:`{
+						trigger.data.register
+					}`,
+				init: `{
+					if(var['name']) bounce('Already registered');
+					if(!trigger.data.name) bounce('Name param missing');
+				}`,
+				messages: [
+					{
+						app: 'payment',
+						payload: {
+							asset:'base',
+							outputs: [
+								{address: `{$REGISTRY}`, amount: `{$base_inp}`}
+							]
+						}
+					},
+					{
+						app: 'state',
+						state: `{
+							var['name'] = trigger.data.name;
+							var['owner'] = $OWNER;
 						}`
 					}
 				]
